@@ -73,7 +73,6 @@ drawBall();
 
 //move user
 function moveUser(e) {
-  console.log(e);
   switch (e.key) {
     case "ArrowLeft":
       if (currentPosition > 0) {
