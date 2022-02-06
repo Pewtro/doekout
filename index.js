@@ -1,10 +1,16 @@
 const grid = document.querySelector(".grid");
 const scoreDisplay = document.querySelector("#score");
+const highScoreDisplay = document.querySelector("#highscore");
+
 const blockWidth = 100;
 const blockHeight = 20;
 const ballDiameter = 20;
 const boardWidth = 560;
 const boardHeight = 300;
+
+const horizontalBlocks = 5;
+const verticalBlocks = 3;
+
 let xDirection = -2;
 let yDirection = 2;
 
@@ -13,10 +19,11 @@ const userHeight = 10;
 let currentPosition = userStart;
 
 const ballStart = [270, 40];
-let ballCurrentPosition = ballStart;
+let ballCurrentPosition = [...ballStart];
 
 let timerId;
 let score = 0;
+let highscore = 0;
 
 //my block
 class Block {
@@ -29,7 +36,7 @@ class Block {
 }
 
 //all my blocks
-const blocks = [
+/*const blocks = [
   new Block(10, 270),
   new Block(120, 270),
   new Block(230, 270),
@@ -45,7 +52,19 @@ const blocks = [
   new Block(230, 210),
   new Block(340, 210),
   new Block(450, 210),
-];
+];*/
+
+let blocks = [];
+function populateBlocks() {
+  blocks = []; //ensure it's empty
+  for (let i = 0; i < verticalBlocks; i++) {
+    let startHeight = boardHeight - blockHeight - 10 - i * 30;
+    for (let j = 0; j < horizontalBlocks; j++) {
+      let startHorizontal = 10 + (blockWidth + 10) * j;
+      blocks.push(new Block(startHorizontal, startHeight));
+    }
+  }
+}
 
 //draw my blocks
 function addBlocks() {
@@ -57,6 +76,7 @@ function addBlocks() {
     grid.appendChild(block);
   }
 }
+populateBlocks();
 addBlocks();
 
 //add user
@@ -126,9 +146,14 @@ function checkForCollisions() {
       allBlocks[i].classList.remove("block");
       blocks.splice(i, 1);
       changeDirection();
-      score++;
-      scoreDisplay.innerHTML = score;
+      score += 1;
+      scoreDisplay.innerHTML = `Score: ${score}`;
+
       if (blocks.length == 0) {
+        if (score > highscore) {
+          highscore = score;
+          highScoreDisplay.innerHTML = `Highscore: ${highscore}`;
+        }
         scoreDisplay.innerHTML = "You Win!";
         clearInterval(timerId);
         document.removeEventListener("keydown", moveUser);
@@ -156,6 +181,10 @@ function checkForCollisions() {
 
   //game over
   if (ballCurrentPosition[1] <= 0) {
+    if (score > highscore) {
+      highscore = score;
+      highScoreDisplay.innerHTML = `Highscore: ${highscore}`;
+    }
     clearInterval(timerId);
     scoreDisplay.innerHTML = "You lose!";
     document.removeEventListener("keydown", moveUser);
@@ -180,3 +209,53 @@ function changeDirection() {
     return;
   }
 }
+
+function restartGame() {
+  // empty the playing field
+  const elements = document.getElementsByClassName("block");
+  console.log(elements);
+  while (elements.length > 0) {
+    elements[0].parentNode.removeChild(elements[0]);
+  }
+
+  ballCurrentPosition = [...ballStart];
+  currentPosition = userStart;
+
+  populateBlocks();
+  addBlocks();
+
+  drawUser();
+
+  drawBall();
+
+  xDirection = -2;
+  yDirection = 2;
+
+  score = 0;
+  scoreDisplay.innerHTML = `Score: ${score}`;
+
+  clearInterval(timerId);
+  document.removeEventListener("keydown", moveUser);
+
+  document.addEventListener("keydown", moveUser);
+  timerId = setInterval(moveBall, 30);
+}
+
+let isPaused = false;
+function checkForPause(e) {
+  if (e.code === "Space") {
+    isPaused = !isPaused;
+    if (isPaused) {
+      clearInterval(timerId);
+      document.removeEventListener("keydown", moveUser);
+    } else {
+      document.addEventListener("keydown", moveUser);
+      timerId = setInterval(moveBall, 30);
+    }
+  }
+
+  if (e.code === "KeyF") {
+    restartGame();
+  }
+}
+document.addEventListener("keydown", checkForPause);

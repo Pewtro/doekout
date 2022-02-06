@@ -28,20 +28,28 @@ Bolden ryger gennem "loftet" af banen - kan i hjælpe med at finde ud af hvorfor
 
 Der er pt. kun 5 blokke, kan du tilføje 10 mere, så der er 15 i alt?
 
-## 9. Forbedring af blok generering
+## 7. Tilføj en score funktion
+
+Tilføj en funktion hvor din nuværende score vises
+
+## 8. Forbedring af blok generering
 
 I opgave 4 skulle du tilføje flere blokke, hvis du gjorde dette manuelt ved at kopiere new Block(x,x) ned lagde du måske mærke til at det kunne hurtigt blive træls og mange linjer af meget ens kode. Kan du forbedre dette, så det bliver mere dynamisk / fleksibelt?
 
-## 10. Tilføj en "prøv igen" funktion / knap
+## 9. Tilføj en "prøv igen" funktion / knap
 
 Når du har tabt eller vundet skal du kunne starte spillet forfra ved at trykke på en knap.
 
-## 11. Tilføj en pause funktion
+## 10. Tilføj en pause funktion / tast
 
 Nu hvor vi kan prøve om og om igen, kunne det være rart med en kaffepause - tilføj en pause funktion som kan blive triggeret manuelt af et tryk på en knap eller af et tryk på en tast
 
 Hint: Taster har en række events tilknyttet, se jeres Højre/Venstre piletast funktioner.
 
+## 11. Tilføj en high score funktion
+
+Tilføj en funktion hvor din high score kan vises mellem dine forsøg
+
 ## ????
 
-Tilføj andre funktioner i kunne tænke jer eller tag fat i en af os så er der andre projekter
+Tilføj andre funktioner i kunne tænke jer, en idé kunne være en infinite mode hvor nye blocks automatisk genereres.
