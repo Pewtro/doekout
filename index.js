@@ -2,26 +2,45 @@ const grid = document.querySelector(".grid");
 const scoreDisplay = document.querySelector("#score");
 const highScoreDisplay = document.querySelector("#highscore");
 
-const blockWidth = 100;
-const blockHeight = 20;
-const ballDiameter = 20;
+/**
+ * Variables to manage the board
+ */
 const boardWidth = 560;
 const boardHeight = 300;
+
+/**
+ * Variables for managing the blocks to destroy
+ */
+const blockWidth = 100;
+const blockHeight = 20;
 
 const horizontalBlocks = 5;
 const verticalBlocks = 3;
 
-let xDirection = -2;
-let yDirection = 2;
-
+/**
+ * Variables for managing the user block
+ */
 const userStart = 230;
 const userHeight = 10;
 let currentPosition = userStart;
 
+/**
+ * Variables for managing the ball
+ */
+const ballDiameter = 20;
+
+let timerId;
+let timerIdInterval = 30;
+
+let xDirection = -2;
+let yDirection = 2;
+
 const ballStart = [270, 40];
 let ballCurrentPosition = [...ballStart];
 
-let timerId;
+/**
+ * Variables for managing the score
+ */
 let score = 0;
 let highscore = 0;
 
@@ -34,25 +53,6 @@ class Block {
     this.topLeft = [xAxis, yAxis + blockHeight];
   }
 }
-
-//all my blocks
-/*const blocks = [
-  new Block(10, 270),
-  new Block(120, 270),
-  new Block(230, 270),
-  new Block(340, 270),
-  new Block(450, 270),
-  new Block(10, 240),
-  new Block(120, 240),
-  new Block(230, 240),
-  new Block(340, 240),
-  new Block(450, 240),
-  new Block(10, 210),
-  new Block(120, 210),
-  new Block(230, 210),
-  new Block(340, 210),
-  new Block(450, 210),
-];*/
 
 let blocks = [];
 function populateBlocks() {
@@ -130,7 +130,7 @@ function moveBall() {
   checkForCollisions();
 }
 
-timerId = setInterval(moveBall, 30);
+timerId = setInterval(moveBall, timerIdInterval);
 
 //check for collisions
 function checkForCollisions() {
@@ -150,13 +150,14 @@ function checkForCollisions() {
       scoreDisplay.innerHTML = `Score: ${score}`;
 
       if (blocks.length == 0) {
-        if (score > highscore) {
-          highscore = score;
-          highScoreDisplay.innerHTML = `Highscore: ${highscore}`;
+        scoreDisplay.innerHTML = "You've reached next level!";
+        if (timerIdInterval > 5) {
+          timerIdInterval -= 5;
+        } else {
+          scoreDisplay.innerHTML = "You've reached the impossible level!!!!";
+          timerIdInterval = 0.1;
         }
-        scoreDisplay.innerHTML = "You Win!";
-        clearInterval(timerId);
-        document.removeEventListener("keydown", moveUser);
+        restartGame(false);
       }
     }
   }
@@ -210,7 +211,7 @@ function changeDirection() {
   }
 }
 
-function restartGame() {
+function restartGame(resetScore = true) {
   // empty the playing field
   const elements = document.getElementsByClassName("block");
   console.log(elements);
@@ -231,14 +232,16 @@ function restartGame() {
   xDirection = -2;
   yDirection = 2;
 
-  score = 0;
-  scoreDisplay.innerHTML = `Score: ${score}`;
+  if (resetScore) {
+    score = 0;
+    scoreDisplay.innerHTML = `Score: ${score}`;
+  }
 
   clearInterval(timerId);
   document.removeEventListener("keydown", moveUser);
 
   document.addEventListener("keydown", moveUser);
-  timerId = setInterval(moveBall, 30);
+  timerId = setInterval(moveBall, timerIdInterval);
 }
 
 let isPaused = false;
@@ -250,7 +253,7 @@ function checkForPause(e) {
       document.removeEventListener("keydown", moveUser);
     } else {
       document.addEventListener("keydown", moveUser);
-      timerId = setInterval(moveBall, 30);
+      timerId = setInterval(moveBall, timerIdInterval);
     }
   }
 
